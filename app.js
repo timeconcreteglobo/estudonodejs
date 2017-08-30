@@ -2,20 +2,18 @@ var express = require('express'),
 http = require("http"),
 bodyParser = require("body-parser")
 token = require("./config/token");
+routes = require("./routes");
 
 
 var app = express();
 
 app.use(bodyParser.json());
-routes = require("./routes");
 app.use(routes);
 
+
+prop = require("./config/properties");
 app.get("/token", function(request, response){ 
-
-var token = token();
-
-console.log(token);
-response.send(token);
+response.send(prop.client_id);
 });
 
 
