@@ -7,7 +7,10 @@ var header_auth = {
     "Authorization" : auth
 };
 var glive_url = "https://glive.backstage.qa01.globoi.com/";
-var get_usuario_url = glive_url + "v2/users/";
+var path_usuario_v2 = "v2/users/";
+var get_usuario_url = glive_url + path_usuario_v2;
+var get_usuario_email_url = glive_url + path_usuario_v2 + "email/";
+var get_usuario_username_url = glive_url + path_usuario_v2 + "username/";
 
 
 module.exports = {
@@ -18,5 +21,8 @@ module.exports = {
     grant_type : grant_type ,
     header_auth : header_auth,
     glive_url :  glive_url,
-    get_usuario_url : get_usuario_url
+    get_usuario_url : get_usuario_url,
+    get_usuario_email_url : get_usuario_email_url,
+    get_usuario_username_url : get_usuario_username_url
+
 };
