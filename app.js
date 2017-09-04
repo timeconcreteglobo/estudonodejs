@@ -8,18 +8,7 @@ routes = require("./routes");
 var app = express();
 
 app.use(bodyParser.json());
-app.use(routes);
-
-
-prop = require("./config/properties");
-app.get("/token", function(request, response){
-response.send("teste");
-});
-
-
-app.get("/usuario/:globoID",function(request, response){
-       client.getUsuario(request.params.globoID, response);
- });
+app.use(routes);   
 
 
 var server = app.listen(4000, function(){
