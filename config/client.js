@@ -3,6 +3,7 @@ var request = require("request");
 var axios = require("axios");
 var token_atual = "";
 var responseBody = "";
+var authHeader = {timeout: 5000,headers: {"Authorization": "Bearer " + token_atual}};
 
 
 function msgInfo(mensagem, codigo) {
@@ -11,28 +12,19 @@ function msgInfo(mensagem, codigo) {
 }
 
 
-function doGetAxios(rota) {
-    console.log("doGetAxios");
-    var responseGlive;
-    authHeader = {timeout: 5000,headers: {"Authorization": "Bearer " + token_atual}};
-
-    axios.get(rota, authHeader)
-        .then(function (response) {
-            getToken();
-        }).then(function (response) {
-            responseGlive = error.response;
-            errorHeader = response.headers.via;
-            statusCode = response.status;
-            console.log("ResponseGlive: "+responseGlive);
-        });
-};
-
-
 function getUsuarioPorEmail(login, responseCallBack) {
     console.log("getUsuarioPorEmail");
     var rota = prop.get_usuario_email_url + login;
-    var retorno = doGetAxios(rota);
-    responseCallBack.send(retorno.data);
+    var retorno = axios.get(rota, authHeader)
+        .then(function(response){
+            responseCallBack.send(response.data);
+        }).catch(function(error){
+            if (error.response.status == 401){
+                getToken();
+            }
+            responseCallBack.send(error.response.data);
+        });
+    
 };
 
 
