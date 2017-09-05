@@ -1,13 +1,14 @@
 var   express = require('express'), 
+      bodyParser = require('body-parser'),
       client = require("./config/client");
-      routes = require("./routes");
+      routesUsuario = require("./routes/usuario");
 
 
 var app = express();
 
 
 app.use(bodyParser.json());
-app.use(routes);   
+app.use(routesUsuario);   
 
 
 var server = app.listen(4000, function() {

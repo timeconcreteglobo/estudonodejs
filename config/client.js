@@ -1,8 +1,8 @@
 var prop = require("./properties");
 var request = require("request");
 var axios = require("axios");
-token_atual = "";
-responseBody = "";
+var token_atual = "";
+var responseBody = "";
 
 
 function msgInfo(mensagem, codigo) {
@@ -11,54 +11,37 @@ function msgInfo(mensagem, codigo) {
 }
 
 
-
 function doGetAxios(rota) {
-
+    console.log("doGetAxios");
     var responseGlive;
-
-    authHeader = {
-        timeout: 5000,
-        headers: {
-            "Authorization": "Bearer " + token_atual
-        }
-    };
+    authHeader = {timeout: 5000,headers: {"Authorization": "Bearer " + token_atual}};
 
     axios.get(rota, authHeader)
         .then(function (response) {
-            responseGlive = response;
-        }).catch(function (error) {
-            response = error.response;
+            getToken();
+        }).then(function (response) {
+            responseGlive = error.response;
             errorHeader = response.headers.via;
             statusCode = response.status;
-            if (statusCode == 401) {
-                getToken();
-                // LEMBRETE
-                //PARAMOS NO PROBLEMA DA SINCRONIZACAO DA BUSCA DO TOKEN DE ACORDO COM A PROMISE
-                doGetAxios(rota);
-            }
-        })
-
-
-    console.log(responseGlive);
-
-}
-
-
-
-
-function getToken() {
-    request.post({ url: prop.token_url + prop.grant_type, headers: prop.header_auth }, function (error, response, body) {
-        var token = JSON.parse(body);
-        token_atual = token.access_token;
-        console.log("Token obtido" + token_atual);
-    })
+            console.log("ResponseGlive: "+responseGlive);
+        });
 };
 
+
+function getUsuarioPorEmail(login, responseCallBack) {
+    console.log("getUsuarioPorEmail");
+    var rota = prop.get_usuario_email_url + login;
+    var retorno = doGetAxios(rota);
+    responseCallBack.send(retorno.data);
+};
+
+
 function getToken() {
     request.post({ url: prop.token_url + prop.grant_type, headers: prop.header_auth }, function (error, response, body) {
         var token = JSON.parse(body);
         token_atual = token.access_token;
-    })
+        console.log("Token obtido: " + token_atual);
+    });
 };
 
 function getUsuarioGlive(globoID, responseCallBack) {
@@ -73,11 +56,6 @@ function getUsuarioPorUsername(username, responseCallBack) {
 
 };
 
-function getUsuarioPorEmail(login, responseCallBack) {
-    var rota = prop.get_usuario_email_url + login;
-    doGetAxios(rota);
-
-};
 
 
 function traduzUsuario(gliveResponse) {
