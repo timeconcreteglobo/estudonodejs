@@ -5,35 +5,35 @@ var token_atual = "";
 var responseBody = "";
 var authHeader = {timeout: 5000,headers: {"Authorization": "Bearer " + token_atual}};
 
-
 function msgInfo(mensagem, codigo) {
     this.mensagem = mensagem;
     this.codigo = codigo;
 }
 
-
 function getUsuarioPorEmail(login, responseCallBack) {
     console.log("getUsuarioPorEmail");
     var rota = prop.get_usuario_email_url + login;
-    var retorno = axios.get(rota, authHeader)
+    return axios.get(rota, authHeader)
         .then(function(response){
             responseCallBack.send(response.data);
         }).catch(function(error){
             if (error.response.status == 401){
-                getToken();
-            }
-            responseCallBack.send(error.response.data);
+                getToken().then(function(response){
+                    authHeader.headers.Authorization = "Bearer " + response.data.access_token;
+                    getUsuarioPorEmail(login, responseCallBack);
+                }).catch(function(error){
+                    console.log(error);
+                });
+            } else { 
+                console.log('Error nao 401');
+                responseCallBack.send(error.response.data);
+            }   
         });
-    
 };
 
-
 function getToken() {
-    request.post({ url: prop.token_url + prop.grant_type, headers: prop.header_auth }, function (error, response, body) {
-        var token = JSON.parse(body);
-        token_atual = token.access_token;
-        console.log("Token obtido: " + token_atual);
-    });
+        console.log(prop.token_url + prop.grant_type);
+        return axios.post(prop.token_url + prop.grant_type, prop.header_auth);
 };
 
 function getUsuarioGlive(globoID, responseCallBack) {
@@ -44,11 +44,7 @@ function getUsuarioGlive(globoID, responseCallBack) {
 function getUsuarioPorUsername(username, responseCallBack) {
     var rota = prop.get_usuario_username_url + username;
     doGet(rota, responseCallBack);
-
-
 };
-
-
 
 function traduzUsuario(gliveResponse) {
 
@@ -75,6 +71,3 @@ module.exports = {
     getUsuarioPorUsername: getUsuarioPorUsername,
     getUsuarioPorEmail: getUsuarioPorEmail
 }
-
-
-

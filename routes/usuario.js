@@ -9,7 +9,6 @@ response.send('ALOU FUNCIONOU');
 router.get("/usuario/email/:email",function(request, response){
       console.log("Chamando get por email"); 
       client.getUsuarioPorEmail(request.params.email, response);
-
  });
 
  router.get("/usuario/login/:login",function(request, response){
