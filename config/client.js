@@ -15,11 +15,14 @@ function getUsuarioPorEmail(login, responseCallBack) {
     var rota = prop.get_usuario_email_url + login;
     return axios.get(rota, authHeader)
         .then(function(response){
+            console.log("getUsuarioPorEmail  --- then()");
             responseCallBack.send(response.data);
         }).catch(function(error){
+            console.log("getUsuarioPorEmail  -- catch()");
             if (error.response.status == 401){
                 getToken().then(function(response){
-                    authHeader.headers.Authorization = "Bearer " + response.data.access_token;
+                    console.log("Token obtido   -- ", response.data.access_token);
+                    authHeader.headers.Authorization = `Bearer ${response.data.access_token}`;
                     getUsuarioPorEmail(login, responseCallBack);
                 }).catch(function(error){
                     console.log(error);
@@ -33,7 +36,11 @@ function getUsuarioPorEmail(login, responseCallBack) {
 
 function getToken() {
         console.log(prop.token_url + prop.grant_type);
-        return axios.post(prop.token_url + prop.grant_type, prop.header_auth);
+        console.log(prop.header_auth);
+        var config = {
+            headers: {'Authorization' : prop.auth}
+        }
+        return axios.post(prop.token_url + prop.grant_type, {}, config);
 };
 
 function getUsuarioGlive(globoID, responseCallBack) {
