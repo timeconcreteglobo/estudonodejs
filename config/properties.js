@@ -4,7 +4,7 @@ var auth = "Basic "+ new Buffer(client_id + ":" + client_secret).toString("base6
 var token_url = "https://accounts.backstage.qa01.globoi.com/token";
 var grant_type = "?grant_type=client_credentials";
 var header_auth = {
-    "Authorization" : auth
+    headers: {"Authorization" : auth}
 };
 var glive_url = "https://glive.backstage.qa01.globoi.com/";
 var path_usuario_v2 = "v2/users/";

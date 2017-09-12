@@ -10,8 +10,13 @@ function msgInfo(mensagem, codigo) {
     this.codigo = codigo;
 }
 
+function atualizaTokenNoHeader(token){
+    console.log("atualizaTokenNoHeader()");
+    authHeader.headers.Authorization = `Bearer ${token}`;
+}
+
 function getUsuarioPorEmail(login, responseCallBack) {
-    console.log("getUsuarioPorEmail");
+    console.log("getUsuarioPorEmail()");
     var rota = prop.get_usuario_email_url + login;
     return axios.get(rota, authHeader)
         .then(function(response){
@@ -21,26 +26,22 @@ function getUsuarioPorEmail(login, responseCallBack) {
             console.log("getUsuarioPorEmail  -- catch()");
             if (error.response.status == 401){
                 getToken().then(function(response){
-                    console.log("Token obtido   -- ", response.data.access_token);
-                    authHeader.headers.Authorization = `Bearer ${response.data.access_token}`;
+                    console.log("Token obtido: ", response.data.access_token);
+                    atualizaTokenNoHeader(response.data.access_token);
                     getUsuarioPorEmail(login, responseCallBack);
                 }).catch(function(error){
-                    console.log(error);
+                    console.log('Erro ao buscar o token: '+error);
                 });
             } else { 
-                console.log('Error nao 401');
+                console.log('Erro não tratado: '+error);
                 responseCallBack.send(error.response.data);
             }   
         });
 };
 
 function getToken() {
-        console.log(prop.token_url + prop.grant_type);
-        console.log(prop.header_auth);
-        var config = {
-            headers: {'Authorization' : prop.auth}
-        }
-        return axios.post(prop.token_url + prop.grant_type, {}, config);
+    console.log("getToken()");
+    return axios.post(prop.token_url + prop.grant_type, {}, prop.header_auth);
 };
 
 function getUsuarioGlive(globoID, responseCallBack) {
